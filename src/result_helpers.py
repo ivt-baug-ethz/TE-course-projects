@@ -35,7 +35,6 @@ class Run(TypedDict):
     m_region: list[list[float]]
     q: list[dict[StateKey, float]]
     u: list[dict[Boundary, float]]
-    vht: list[float]
     mfd_n: list[int]
     mfd_m: list[list[float]]
 
@@ -105,8 +104,6 @@ def save_results(run_dir: Path, env: "Network", controller: "Controller") -> Non
         "q": [{str(key): v for key, v in demand.get_demand(t_k).items()} for t_k in t],
         # one control per step, so one entry fewer than the records
         "u": [{str(key): v for key, v in u.items()} for u in controller.u_record],
-        # cumulative since t = 0, summed over every simulated second during the run
-        "vht": env.vht_record,
         # every region's MFD sampled every 100 veh, one row per accumulation
         "mfd": {"n": n_mfd, "m": m_mfd},
     }
@@ -136,29 +133,6 @@ def load_run(run_dir: Path) -> Run:
         "m_region": results["m_region"],
         "q": [{literal_eval(key): v for key, v in q.items()} for q in results["q"]],
         "u": [{literal_eval(key): v for key, v in u.items()} for u in results["u"]],
-        "vht": results["vht"],
         "mfd_n": results["mfd"]["n"],
         "mfd_m": results["mfd"]["m"],
     }
-
-
-def completion_rate(run: Run, k: int) -> float:
-    """Rate of completed trips [veh/s] at record k, as Network.make_step counts them: the
-    summed trip completion m_s = m_r * n_s / n_r of every state at its destination."""
-    m_r, n_r = run["m_region"][k], run["n_region"][k]
-    return sum(
-        m_r[loc] * n_s / n_r[loc]
-        for (path, loc), n_s in run["n"][k].items()
-        if loc == path[-1]
-    )
-
-
-def performance(run: Run, k: int = -1) -> dict[str, float]:
-    """Performance of a stored run from t = 0 up to record k (default: the whole run),
-    keyed by name and unit."""
-    last = k % len(run["t"])  # non-negative index of record k
-    # step_length times the completion rate at the state after every step, records 1..k
-    completed = sum(
-        run["step_length"] * completion_rate(run, j) for j in range(1, last + 1)
-    )
-    return {"Completed trips [veh]": completed, "VHT [veh h]": run["vht"][k]}

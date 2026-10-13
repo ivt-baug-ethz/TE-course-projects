@@ -25,7 +25,6 @@ from src.result_helpers import (
     RESULTS_DIR,
     load_run,
     make_run_dir,
-    performance,
     save_config,
     save_results,
 )
@@ -109,10 +108,6 @@ def main(args: Namespace) -> None:
     save_results(run_dir, env, controller)
     print(f"Results stored in {run_dir}")
     run = load_run(run_dir)
-
-    # print the performance measures of the whole run
-    for name, value in performance(run).items():
-        print(f"  {name}: {value:.1f}")
 
     # store the input figures supplied to students: every region's MFD and the demand
     save_input_figures(run, args.show)

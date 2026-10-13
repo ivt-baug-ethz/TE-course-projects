@@ -35,17 +35,11 @@ class Network:
         self.n_region_record = [self.get_n_region()]
         self.u_record: list[dict[Boundary, float]] = []
 
-        # vehicle hours travelled [veh h], cumulative since t = 0 at every record
-        self.vht_record = [0.0]
-
     def make_step(self, step: int, u: dict[Boundary, float]) -> None:
         """Advance one control step (step_length seconds) with boundary control u."""
 
         m: dict[StateKey, float] = {}
         m_: dict[StateKey, float] = {}
-
-        # this step's record starts from the total so far and is summed up second by second
-        self.vht_record.append(self.vht_record[-1])
 
         # simulate traffic dynamics for one time step
         for i in range(self.step_length):
@@ -60,9 +54,6 @@ class Network:
 
             # current demand [veh/s] of every state (path, region) at this second
             q = self.demand.get_demand(t)
-
-            # every vehicle in the network at the start of this second spends it there
-            self.vht_record[-1] += sum(n_r) / 3600
 
             for (path, loc), _ in self.n.items():
                 # the first step is to compute completion
