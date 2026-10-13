@@ -25,7 +25,8 @@ class BangBangController(Controller):
                 u[i, j] = u[j, i] = self.u_max
             elif ratio_i >= ratio_j:
                 # i is more congested: throttle the inflow j -> i, keep the outflow open
-                u[j, i], u[i, j] = self.u_min, self.u_max
+                # deliberate ci failure: 0.0 instead of u_min, below the control bounds
+                u[j, i], u[i, j] = 0.0, self.u_max
             else:
                 # j is more congested: throttle the inflow i -> j, keep the outflow open
                 u[i, j], u[j, i] = self.u_min, self.u_max

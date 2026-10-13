@@ -14,7 +14,8 @@ class EMPCController(NMPCController):
         # ======================================================================
         # >>> to be implemented by you <<<
         # compute the rate of completed trips from the state vector x
-        return ca.MX(0)
+        # deliberate ci failure: a 2x1 vector instead of a scalar
+        return ca.MX.zeros(2, 1)
         # ======================================================================
 
     def __init__(self, config: Config) -> None:
