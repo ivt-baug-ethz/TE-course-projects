@@ -9,14 +9,6 @@ from src.controllers.nmpc_controller import HORIZON, NMPCController
 class EMPCController(NMPCController):
     """Economic MPC: the NMPCController with an economic cost."""
 
-    def completion_rate(self, x: ca.MX) -> ca.MX:
-        """Rate of completed trips [veh/s] for the state vector x."""
-        # ======================================================================
-        # >>> to be implemented by you <<<
-        # compute the rate of completed trips from the state vector x
-        return ca.MX(0)
-        # ======================================================================
-
     def __init__(self, config: Config) -> None:
         super().__init__(config)
 

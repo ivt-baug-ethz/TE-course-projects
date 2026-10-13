@@ -1,4 +1,4 @@
-"""PController: P, PD or PID perimeter control per directed boundary."""
+"""FeedbackController: P, PD or PID perimeter control per directed boundary."""
 
 from typing import TYPE_CHECKING
 
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from src.environment.environment import Network
 
 
-class PController(Controller):
+class FeedbackController(Controller):
     """Feedback perimeter control per directed boundary."""
 
     def compute_control(self, env: "Network") -> dict[Boundary, float]:
