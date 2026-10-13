@@ -11,6 +11,7 @@ from src.analysis.visualize_results import analyze_run
 from src.analysis.video_generator import generate_video
 from src.config import Config, NetworkType
 from src.environment.environment import Network
+from src.controllers.controller import Controller
 
 # imported so NoControl can be selected as CONTROLLER_TYPE below
 from src.controllers.no_control import NoControl
@@ -49,16 +50,19 @@ GENERATE_VIDEO = True  # render the simulation video of the run (simulation.mp4)
 ANALYZE_RESULTS = True  # store the analysis figures after the simulation
 
 
-def main(args: Namespace) -> None:
-    """Build supply, demand, network and controller, simulate, store and plot the run."""
-    # controller classes by name, as given by --controller
-    controllers = {c.__name__: c for c in CONTROLLERS}
-    config: Config = {
-        "network": args.network,
-        "controller": controllers[args.controller],
-        "sim_duration": args.sim_duration,
-        "step_length": args.step_length,
-        "total_steps": args.sim_duration // args.step_length,  # number of control steps
+def make_config(
+    network: NetworkType,
+    controller: type[Controller],
+    sim_duration: int = SIM_DURATION,
+    step_length: int = STEP_LENGTH,
+) -> Config:
+    """Simulation config of a run of controller on network."""
+    return {
+        "network": network,
+        "controller": controller,
+        "sim_duration": sim_duration,
+        "step_length": step_length,
+        "total_steps": sim_duration // step_length,  # number of control steps
         "u_max": 0.9,  # upper bound of every boundary control
         "u_min": 0.1,  # lower bound of every boundary control
         "mfd_params": {  # legacy settings of base MFD
@@ -74,6 +78,15 @@ def main(args: Namespace) -> None:
             "b2": -1.2772 / 3600,
         },
     }
+
+
+def main(args: Namespace) -> None:
+    """Build supply, demand, network and controller, simulate, store and plot the run."""
+    # controller classes by name, as given by --controller
+    controllers = {c.__name__: c for c in CONTROLLERS}
+    config = make_config(
+        args.network, controllers[args.controller], args.sim_duration, args.step_length
+    )
 
     # initialize supply, demand, network and controller
     supply = Supply(config)
