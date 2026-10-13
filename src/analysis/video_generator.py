@@ -68,12 +68,6 @@ def generate_video(run: Run) -> None:
         for r, (patch, anchor) in enumerate(zip(patches, anchors))
     ]
     clock = ax.text(-extent + 0.1, extent - 0.1, "", fontsize=16, va="top")
-    ax.text(
-        -extent + 0.1,
-        -extent + 0.1,
-        "cell colour: green below the MFD peak, orange at the peak, red beyond it",
-        fontsize=11,
-    )
 
     # frame k: each region's dot at its recorded state, its cell coloured by the
     # accumulation relative to the MFD peak
