@@ -46,7 +46,7 @@ All controllers are located in `src/controllers/` and inherit a base structure f
 | -------------------- | ------------------------- | ------------------------------------------------------ |
 | `NoControl`          | `no_control.py`           | provided baseline that keeps every boundary at `u_max` |
 | `BangBangController` | `bang_bang_controller.py` | provided example of a complete controller              |
-| `PController`        | `p_pd_pid_controller.py`  | stub for a P, PD or PID feedback controller            |
+| `FeedbackController` | `p_pd_pid_controller.py`  | stub for a P, PD or PID feedback controller            |
 | `NMPCController`     | `nmpc_controller.py`      | stub for a nonlinear MPC with CasADi Opti and IPOPT    |
 | `EMPCController`     | `empc_controller.py`      | bonus stub for an economic MPC built on the NMPC       |
 
@@ -84,7 +84,7 @@ Run every command from the repository root with the virtual environment activate
 ```sh
 python main.py                                          # defaults set at the top of main.py
 python main.py --network cordon --controller NoControl  # choose network and controller
-python main.py --controller PController --no-video      # skip the video for quick iterations
+python main.py --controller FeedbackController --no-video      # skip the video for quick iterations
 python main.py --help                                   # list all options
 ```
 

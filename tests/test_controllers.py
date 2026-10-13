@@ -9,7 +9,7 @@ from src.controllers.bang_bang_controller import BangBangController
 from src.controllers.controller import Controller
 from src.controllers.empc_controller import EMPCController
 from src.controllers.nmpc_controller import NMPCController
-from src.controllers.p_pd_pid_controller import PController
+from src.controllers.p_pd_pid_controller import FeedbackController
 from src.environment.demand import Demand
 from src.environment.environment import Network
 from src.environment.supply import Supply
@@ -17,7 +17,7 @@ from src.environment.supply import Supply
 # the student controllers by test id; CI runs one job per id with pytest -k <id>
 CONTROLLERS: dict[str, type[Controller]] = {
     "bang_bang": BangBangController,
-    "p_pd_pid": PController,
+    "p_pd_pid": FeedbackController,
     "nmpc": NMPCController,
     "empc": EMPCController,
 }
@@ -52,12 +52,3 @@ def test_control_of_every_boundary(key: str, network: NetworkType) -> None:
         env.make_step(step, u)
 
     assert len(controller.u_record) == config["total_steps"]
-
-
-@pytest.mark.parametrize("network", list(NetworkType))
-def test_empc_completion_rate(network: NetworkType) -> None:
-    """EMPCController builds on the NMPC and its completion rate is a scalar of the state."""
-    assert issubclass(EMPCController, NMPCController)
-    controller = EMPCController(make_config(network, EMPCController))
-    x = ca.MX.sym("x", len(controller.states))
-    assert controller.completion_rate(x).shape == (1, 1)

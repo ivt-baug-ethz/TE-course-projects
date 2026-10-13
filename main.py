@@ -16,7 +16,7 @@ from src.controllers.controller import Controller
 # imported so NoControl can be selected as CONTROLLER_TYPE below
 from src.controllers.no_control import NoControl
 from src.controllers.bang_bang_controller import BangBangController
-from src.controllers.p_pd_pid_controller import PController
+from src.controllers.p_pd_pid_controller import FeedbackController
 from src.controllers.nmpc_controller import NMPCController
 from src.controllers.empc_controller import EMPCController
 from src.environment.demand import Demand
@@ -33,7 +33,7 @@ from src.result_helpers import (
 CONTROLLERS = [
     NoControl,
     BangBangController,
-    PController,
+    FeedbackController,
     NMPCController,
     EMPCController,
 ]
