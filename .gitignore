@@ -78,6 +78,9 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# LaTeX assignment stuff
+latex/
+
 # IPython
 profile_default/
 ipython_config.py

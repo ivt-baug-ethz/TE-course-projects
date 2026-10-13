@@ -1,0 +1,31 @@
+name: Controller interfaces
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Bang-bang controller
+            key: bang_bang
+          - name: P / PD / PID controller
+            key: p_pd_pid
+          - name: NMPC controller
+            key: nmpc
+          - name: EMPC controller
+            key: empc
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: pytest -v tests -k ${{ matrix.key }}
+        env:
+          PYTHONPATH: .
+          MPLBACKEND: Agg
