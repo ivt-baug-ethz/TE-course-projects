@@ -18,10 +18,7 @@ class PController(Controller):
         # ======================================================================
         # >>> to be implemented by you <<<
         # compute the control of every boundary from the current state
-        # deliberate ci failure: the boundaries leaving region 0 get no control
-        u: dict[Boundary, float] = {
-            key: self.u_max for key in env.supply.u if key[0] != 0
-        }
+        u: dict[Boundary, float] = {key: self.u_max for key in env.supply.u}
         # ======================================================================
 
         # clip the control to [u_min, u_max]

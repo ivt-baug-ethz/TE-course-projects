@@ -127,6 +127,5 @@ class NMPCController(Controller):
         # ======================================================================
         # >>> to be REMOVED by you <<<
         # note: open gates until the block above is uncommented with full implementation
-        # deliberate ci failure: a CasADi DM instead of a python float
-        return {key: ca.DM(self.u_max) for key in self.boundaries}
+        return {key: self.u_max for key in self.boundaries}
         # ======================================================================
