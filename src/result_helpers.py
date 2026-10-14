@@ -4,7 +4,9 @@ import json
 from ast import literal_eval
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING, Any, TypedDict
+
+import numpy as np
 
 from src.config import Boundary, Config, NetworkType, StateKey
 
@@ -37,6 +39,7 @@ class Run(TypedDict):
     u: list[dict[Boundary, float]]
     mfd_n: list[int]
     mfd_m: list[list[float]]
+    custom: dict[str, list[Any]]
 
 
 def make_run_dir(results_dir: Path, config: Config) -> Path:
@@ -106,8 +109,13 @@ def save_results(run_dir: Path, env: "Network", controller: "Controller") -> Non
         "u": [{str(key): v for key, v in u.items()} for u in controller.u_record],
         # every region's MFD sampled every 100 veh, one row per accumulation
         "mfd": {"n": n_mfd, "m": m_mfd},
+        # values the controller added with Controller.record, one list per name
+        "custom": controller.custom,
     }
-    (run_dir / "results.json").write_text(json.dumps(log))
+    # numpy and CasADi values are stored as (nested) lists
+    (run_dir / "results.json").write_text(
+        json.dumps(log, default=lambda value: np.asarray(value).tolist())
+    )
 
 
 def load_run(run_dir: Path) -> Run:
@@ -135,4 +143,5 @@ def load_run(run_dir: Path) -> Run:
         "u": [{literal_eval(key): v for key, v in u.items()} for u in results["u"]],
         "mfd_n": results["mfd"]["n"],
         "mfd_m": results["mfd"]["m"],
+        "custom": results["custom"],
     }
