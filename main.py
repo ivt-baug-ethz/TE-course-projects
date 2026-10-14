@@ -40,9 +40,9 @@ CONTROLLERS = [
 
 # define simulation parameters, the defaults of the command line arguments
 NETWORK_TYPE = (
-    NetworkType.MULTI_REGION_7
+    NetworkType.CORDON
 )  # options: NetworkType.CORDON, NetworkType.MULTI_REGION_7
-CONTROLLER_TYPE = BangBangController  # options: CONTROLLERS
+CONTROLLER_TYPE = NoControl  # options: CONTROLLERS
 SIM_DURATION = 7200
 STEP_LENGTH = 60
 GENERATE_VIDEO = True  # render the simulation video of the run (simulation.mp4)
