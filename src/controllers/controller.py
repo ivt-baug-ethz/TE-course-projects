@@ -1,6 +1,6 @@
 """Perimeter controllers: they set the share u of the transfer flow across each boundary."""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from src.config import Boundary, Config
 
@@ -22,6 +22,13 @@ class Controller:
 
         # every control returned by get_control, one per control step
         self.u_record: list[dict[Boundary, float]] = []
+
+        # custom values added with record, stored under "custom" in results.json
+        self.custom: dict[str, list[Any]] = {}
+
+    def record(self, name: str, value: Any) -> None:
+        """Append value to the custom series name, stored with the run in results.json."""
+        self.custom.setdefault(name, []).append(value)
 
     def get_control(self, env: "Network") -> dict[Boundary, float]:
         """Compute, record and return the control dict (from, to) -> u for env."""

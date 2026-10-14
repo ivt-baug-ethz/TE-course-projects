@@ -129,6 +129,7 @@ step, at the times `t = 0, step_length, ..., sim_duration`.
 | `q`        | demand of every path                                                                                                     | veh/s      |
 | `u`        | control of every boundary `(from, to)`, with one entry fewer than the records, as `u[k]` is held from `t[k]` to `t[k+1]` | -          |
 | `mfd`      | MFD of every region, sampled every 100 veh (`n`, with one row of `m` per sample)                                         | veh, veh/s |
+| `custom`   | values stored by your controller with `self.record(name, value)`, one list per name (see below)                          | -          |
 
 A path is the tuple of regions that a trip visits, with the origin first and the destination
 last. Since JSON keys cannot be tuples, tuple keys are stored as strings.
@@ -183,6 +184,20 @@ def compute_control(self, env: "Network") -> dict[Boundary, float]:
 ```
 
 `BangBangController` is a complete example that acts on the current state of the regions.
+
+Values that only exist inside your controller, such as a control before clipping, the plan of
+an MPC or the solve time, can be stored with the run. Every call of `self.record(name, value)`
+in `compute_control` appends `value` to the list `name` under the key `custom` in
+`results.json`. Numbers, lists, NumPy arrays and CasADi matrices can be recorded, and arrays are
+stored as nested lists. A value recorded once per control step gives one entry per step, aligned
+with `u`.
+
+```python
+self.record("u_raw", u_raw)               # e.g. a control before it is clipped
+self.record("plan_x", sol.value(self.x))  # e.g. the MPC plan, right after the solve
+```
+
+After the run, `run["custom"]["u_raw"]` holds these values, for example in `analyze_run`.
 
 ## Interface checks
 
